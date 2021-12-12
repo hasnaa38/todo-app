@@ -1,71 +1,30 @@
-# Getting Started with Create React App
+# To Do List Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Phase 1 [ Lab 31 ] - Context API
 
-## Available Scripts
+In this phase, we’ll be adding some top-level settings for the application, so that the user can make some display choices that the app will use by default. Incorporating configuration settings to the application was done using the React Context API.
 
-In the project directory, you can run:
+* Describe how global state is consumed by the components
 
-### `npm start`
+In a typical React application, data is passed top-down (parent to child) via props. This approach is known as prop drilling and it can be complicated when data needs to be accessible by many components at different nesting levels, such as the current authenticated user, theme, or preferred language.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Context provides a way to share data between components globally without having to explicitly pass a prop through every level of the tree. Context is designed to share data that can be considered global for a tree of React components.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+![context](https://camo.githubusercontent.com/cb2aa4204178750ae17ff0752b6ae326d10851ef7421efe96bb6b1138a86dc69/68747470733a2f2f7777772e6361726c726970706f6e2e636f6d2f7374617469632f30643166373232643066653463326263346333643731353935646265363764642f63613638322f70726f702d6472696c6c696e672d762d636f6e746578742e706e67)
 
-### `npm test`
+Steps:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. we create a Context object for the specific use case we want then we create the Context Provider to allow consuming components to subscribe to context changes.
+2. we wrap `App.js` with the Context Component.
+3. we import the `useContext()` hook from React (since we are using function components) along with the Context object in the component we want to access a state from. Then, we can use any state from the context like we use props.  
 
-### `npm run build`
+* Describe the operation of the hook: useForm()
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+It handles the change of the form inputs and the submission of the form:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**handleChange** keeps track of the changes of the form inputs and stores them in the values state.
+**handleSubmit** takes the value state when the form is submitted, and passes it to the callback function which is **addItem** from `todo.js`. **addItem** takes the newly added list item and pushes it to the tasks list state.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Deployment
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# todo-app
+[gh-pages]()
