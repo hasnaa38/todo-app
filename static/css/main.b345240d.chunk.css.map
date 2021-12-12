@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/components/todo/todo.scss"],"names":[],"mappings":"AAAA,aACI,YAAa,CACb,kBAAmB","file":"main.b345240d.chunk.css","sourcesContent":["#pageNumbers{\n    display: flex;\n    flex-direction: row;\n}"]}
