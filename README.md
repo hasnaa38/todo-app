@@ -27,4 +27,4 @@ It handles the change of the form inputs and the submission of the form:
 
 ## Deployment
 
-[gh-pages]()
+[gh-pages](http://hasnaa38.github.io/todo)
