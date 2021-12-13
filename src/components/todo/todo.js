@@ -5,6 +5,7 @@ import Header from '../header/header';
 import Form from '../form/form';
 import List from '../list/list';
 import SettingsForm from '../settingsForm/settingsForm';
+import { Button, Classes, Drawer } from "@blueprintjs/core";
 
 const ToDo = () => {
 
@@ -15,7 +16,7 @@ const ToDo = () => {
     const [pages, setPages] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageElements, setPageElements] = useState([]);
-
+    const [isOpen, setIsOpen] = useState(false);
     function addItem(item) {
         setList([item, ...list]);
     }
@@ -51,6 +52,11 @@ const ToDo = () => {
         setCurrentPage(pageNumber);
     }
 
+    let handleCloseDrawer = () => {
+        setIsOpen(false);
+    }
+
+
     useEffect(() => {
         let incompleteCount = list.length;
         setIncomplete(incompleteCount);
@@ -64,21 +70,40 @@ const ToDo = () => {
 
     return (
         <>
-            <Header incomplete={incomplete}/>
+            <Header incomplete={incomplete} />
             <Form addItem={addItem} />
+            <dev>
+                <dev id='pageNumbers'>
+                    <p>Pages &nbsp;</p>{pages.map(pageNumber => (
+                        <p style={{ cursor: 'pointer' }} onClick={() => handleChangePage(pageNumber)}>{pageNumber}  &nbsp;</p>
+                    ))}</dev>
+                <Button id='pageSettingsButton' icon="cog" onClick={() => setIsOpen(true)}></Button>
+            </dev>
             {pageElements?.map(item => (
                 <List key={item.id} item={item} toggleComplete={toggleComplete} />
             ))}
-            <dev id='pageNumbers'>{pages.map(pageNumber => (
-                <p style={{cursor:'pointer'}} onClick={() => handleChangePage(pageNumber)}>{pageNumber}  &nbsp;</p>
-            ))}</dev>
+
             {settings.displayCompleted && <div>
                 <h3>Completed list:</h3>
                 {completedList.map(item => (
                     <List key={item.id} item={item} toggleComplete={toggleComplete} />
                 ))}
             </div>}
-            <SettingsForm />
+
+            <Drawer style={{ left: '30' }}
+                isOpen={isOpen}
+                onClose={handleCloseDrawer}
+                size={'300px'}
+                usePortal={true}
+                hasBackdrop={true}
+                canOutsideClickClose={true}
+            >
+                <div className={Classes.DRAWER_BODY}>
+                    <div className={Classes.DIALOG_BODY}>
+                        <SettingsForm handleCloseDrawer={handleCloseDrawer} />
+                    </div>
+                </div>
+            </Drawer>
         </>
     );
 };

@@ -2,7 +2,8 @@ import React, { useEffect, useContext, useState } from 'react';
 import { settingsContext } from '../../context/settings.js';
 import { Button, Switch } from "@blueprintjs/core";
 
-export default function SettingsForm() {
+export default function SettingsForm(props) {
+    let { handleCloseDrawer } = props;
     const settings = useContext(settingsContext);
     const [tempFlag, setTempFlag] = useState(settings.displayCompleted);
 
@@ -10,10 +11,11 @@ export default function SettingsForm() {
         e.preventDefault();
         let pageSettings = {
             displayCompleted: tempFlag,
-            pageLimit: e.target.pageLimit.value
+            pageLimit: e.target.pageLimit.value || settings.pageLimit
         };
         localStorage.setItem('pageSettingsContext', JSON.stringify(pageSettings));
         settings.setSubmitFlag(!settings.submitFlag);
+        handleCloseDrawer();
     }
 
     const toggleSwitch = () => {
@@ -21,19 +23,19 @@ export default function SettingsForm() {
     }
 
     return (
-        <>
-            <form onSubmit={handleSubmit}>
-                <h2 data-testid='formHeader'>Page Settings</h2>
 
-                <Switch checked={tempFlag===true} label="Display Completed" onChange={toggleSwitch} />
-                <label class="bp3-label">
-                    <span>Items Per Page</span>
-                    <input class="bp3-input" name="pageLimit" type="number" />
-                </label>
-                <label>
-                    <Button class="bp3-button" type="submit">Save Changes</Button>
-                </label>
-            </form >
-        </>
+        <form onSubmit={handleSubmit}>
+            <h2 data-testid='formHeader'>Page Settings</h2><hr/><br/>
+
+            <Switch checked={tempFlag === true} label="Display Completed" onChange={toggleSwitch} /><br/>
+            <label class="bp3-label">
+                <span>Items Per Page</span>
+                <input class="bp3-input" name="pageLimit" type="number" /><br/>
+                <p><strong>Current Items Per Page: {settings.pageLimit}</strong></p>
+            </label><br/>
+            <label>
+                <Button class="bp3-button" type="submit">Save Changes</Button>
+            </label>
+        </form >
     )
 }

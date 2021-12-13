@@ -2,6 +2,7 @@ import React from 'react';
 import useForm from '../../hooks/form';
 import { v4 as uuid } from 'uuid';
 import { Button } from "@blueprintjs/core";
+import './form.scss';
 
 export default function Form(props) {
     const { addItem } = props;
@@ -15,12 +16,13 @@ export default function Form(props) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
 
-            <h2 data-testid='formHeader'>Add To Do Item</h2>
+        <form id='newForm' onSubmit={handleSubmit}>
+
+            <h2 data-testid='formHeader'>Add a New ToDo</h2>
 
             <label class="bp3-label">
-                <span>To Do Item</span>
+                <span>Title</span>
                 <input class="bp3-input" onChange={handleChange} name="text" type="text" placeholder="Item Details" />
             </label>
 
@@ -30,13 +32,13 @@ export default function Form(props) {
             </label>
 
             <label class="bp3-label">
-                <span>Difficulty</span>
+                <span>Difficulty</span>&nbsp;
                 <input onChange={handleChange} defaultValue={3} type="range" min={1} max={5} name="difficulty" />
             </label>
 
             <label>
                 <Button class="bp3-button" type="submit">Add Item</Button>
             </label>
-            </form >
+        </form >
     )
 }
