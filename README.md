@@ -1,5 +1,13 @@
 # To Do List Manager
 
+## Deployment
+
+[gh-pages](https://hasnaa38.github.io/todo-app/)
+
+## UML
+
+![uml](src/UML-todo.png)
+
 ## Phase 1 [ Lab 31 ] - Context API
 
 In this phase, we’ll be adding some top-level settings for the application, so that the user can make some display choices that the app will use by default. Incorporating configuration settings to the application was done using the React Context API.
@@ -25,6 +33,11 @@ It handles the change of the form inputs and the submission of the form:
 **handleChange** keeps track of the changes of the form inputs and stores them in the values state.
 **handleSubmit** takes the value state when the form is submitted, and passes it to the callback function which is **addItem** from `todo.js`. **addItem** takes the newly added list item and pushes it to the tasks list state.
 
-## Deployment
+## Phase 2 [ Lab 32 ] - Context API - Behaviors
 
-[gh-pages](http://hasnaa38.github.io/todo)
+In this phase, we’ll be adding a form editor so that users can save their preferences for the application, allowing them to change some of the default behaviors like:
+
+* How many To Do Items to show at once
+* Whether or not to show completed items
+
+Also, the users choices will be saved in Local Storage. So each time they will re-visit the page, their choices will still be there.
