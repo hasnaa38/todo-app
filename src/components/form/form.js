@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
-// import { settingsContext } from '../../context/settings.js';
+import { settingsContext } from '../../context/settings.js';
 import useForm from '../../hooks/form';
 import { v4 as uuid } from 'uuid';
 import { Button } from "@blueprintjs/core";
 
 export default function Form(props) {
+    const settings = useContext(settingsContext);
+    
     const { addItem } = props;
     const { handleChange, handleSubmit } = useForm(submitNewItem);
 

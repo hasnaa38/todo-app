@@ -4,6 +4,7 @@ import './todo.scss';
 import Header from '../header/header';
 import Form from '../form/form';
 import List from '../list/list';
+import SettingsForm from '../settingsForm/settingsForm';
 
 const ToDo = () => {
 
@@ -77,6 +78,7 @@ const ToDo = () => {
                     <List key={item.id} item={item} toggleComplete={toggleComplete} />
                 ))}
             </div>}
+            <SettingsForm />
         </>
     );
 };

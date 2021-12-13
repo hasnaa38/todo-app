@@ -8,7 +8,7 @@ const useForm = (callback) => {
     if (event) event.preventDefault();
     callback(values);
   };
-
+  
   const handleChange = (event) => {
     event.persist();
     setValues(values => ({ ...values, [event.target.name]: event.target.value }));
@@ -22,3 +22,5 @@ const useForm = (callback) => {
 };
 
 export default useForm;
+
+

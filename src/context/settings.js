@@ -1,40 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export const settingsContext = React.createContext();
 
-export default function Settings(props){
+export default function Settings(props) {
+
+    const [stateSettings, setStateSetting] = useState({
+        displayCompleted: false,
+        pageLimit: 4
+    });
+    const[submitFlag, setSubmitFlag] = useState(false);
+
+    useEffect(() => {
+        setStateSetting(JSON.parse(localStorage.getItem('pageSettingsContext')) || stateSettings);
+        console.log(stateSettings);
+    },[submitFlag]);
+
     const state = {
-        displayCompleted: true,
-        pageLimit: 3,
-        sortField: 'oldest to newest'
-    };
-    return(
+        displayCompleted: stateSettings.displayCompleted,
+        pageLimit: stateSettings.pageLimit,
+        submitFlag,
+        setSubmitFlag
+    }
+
+    return (
         <settingsContext.Provider value={state}>
             {props.children}
         </settingsContext.Provider>
     )
 }
-
-
-
-// import React, { Component } from 'react';
-
-// export const settingsContext = React.createContext();
-
-// class settings extends Component {
-//     constructor(props){
-//         super(props);
-//         this.state = {
-//             isCompleted: true,
-//         }
-//     }
-//     render() {
-//         return (
-//             <settingsContext.Provider value={this.state}>
-//                {this.props.children} 
-//             </settingsContext.Provider>
-//         )
-//     }
-// }
-
-// export default settings;
