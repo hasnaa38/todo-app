@@ -36,6 +36,9 @@ export default function LogIn() {
                         <label>
                             <button class="bp3-button" type="submit">login</button>
                         </label>
+                        <label>
+                            <button class="bp3-button" type="submit" onClick={auth.markAsLoggedIn}>mark as logged in</button>
+                        </label>
 
                     </form>
             </When>

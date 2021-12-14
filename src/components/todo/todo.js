@@ -1,17 +1,19 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { settingsContext } from '../../context/settings.js';
+import { toDoContext } from '../../context/todo';
+import { authContext } from '../../context/auth';
 import './todo.scss';
 import Form from '../form/form';
 import List from '../list/list';
 import Auth from '../auth/auth';
 import { Container, Row, Col } from "react-bootstrap";
-import { toDoContext } from '../../context/todo';
 import { Button } from "@blueprintjs/core";
 
 const ToDo = () => {
 
     const settings = useContext(settingsContext);
     const toDoInfo = useContext(toDoContext);
+    const auth = useContext(authContext);
     const localStorageList = JSON.parse(localStorage.getItem('list')) || [];
     const localStorageCompletedList = JSON.parse(localStorage.getItem('completedList')) || [];
     const [list, setList] = useState(localStorageList);
@@ -23,8 +25,8 @@ const ToDo = () => {
     const [currentPage2, setCurrentPage2] = useState(1);
     const [pages1, setPages1] = useState([]);
     const [pages2, setPages2] = useState([]);
-    
-    
+
+
     function addItem(item) {
         setList([item, ...list]);
         setLocalStorage(list);
@@ -73,13 +75,15 @@ const ToDo = () => {
         setCurrentPage2(pageNumber);
     }
 
-    function pagination(listArray, pagesSetter, arraySetter, currentpage){
+    function pagination(listArray, pagesSetter, arraySetter, currentpage) {
         let numberOfPages = Math.ceil(listArray.length / settings.pageLimit);
         let pagesArray = Array.from({ length: numberOfPages }, (v, k) => k + 1);
         pagesSetter(pagesArray);
         let chunks = chunk(listArray, settings.pageLimit);
         arraySetter(chunks[currentpage - 1]);
     }
+
+
 
     useEffect(() => {
         let incompleteCount = list.length;
@@ -90,9 +94,12 @@ const ToDo = () => {
         pagination(completedList, setPages2, setCompletedPageElements, currentPage2);
     }, [list, completedList, currentPage1, currentPage2]);
 
+
+
     return (
         <>
             {/* <Header incomplete={incomplete} /> */}
+
             <Container id='homepage'>
                 <Row>
                     <Col>
@@ -113,7 +120,7 @@ const ToDo = () => {
                             {pageElements?.map(item => (
                                 <List key={item.id} item={item} toggleComplete={toggleComplete} />
                             ))}
-                            <br/>
+                            <br />
                             {settings.displayCompleted && <div>
                                 <h5>Completed Tasks</h5>
                                 <div id='pageNumbers'>
