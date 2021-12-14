@@ -29,7 +29,14 @@ const ToDo = () => {
     function toggleComplete(id) {
         list.map(item => {
             if (item.id === id) {
-                item.complete = !item.complete;
+                item.complete = 'true';
+            }
+            return item;
+        });
+        completedList.map(item => {
+            if (item.id === id) {
+                item.complete = 'false';
+                setList([item, ...list]);
             }
             return item;
         });
@@ -66,7 +73,7 @@ const ToDo = () => {
         setPages(pagesArray);
         let chunks = chunk(list, settings.pageLimit);
         setPageElements(chunks[currentPage - 1]);
-    }, [list, currentPage]);
+    }, [list, currentPage, completedList]);
 
     return (
         <>
