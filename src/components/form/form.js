@@ -19,7 +19,7 @@ export default function Form(props) {
 
         <form id='newForm' onSubmit={handleSubmit}>
 
-            <h2 data-testid='formHeader'>Add a New ToDo</h2>
+            <h4 data-testid='formHeader'>Add a New ToDo</h4>
 
             <label class="bp3-label">
                 <span>Title</span>

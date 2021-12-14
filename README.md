@@ -41,3 +41,17 @@ In this phase, we’ll be adding a form editor so that users can save their pref
 * Whether or not to show completed items
 
 Also, the users choices will be saved in Local Storage. So each time they will re-visit the page, their choices will still be there.
+
+## Phase 3 [ Lab 33 ] - Context API - Behaviors
+
+In this phase, we'll be extending the functionality of the application by requiring users to login to view items and also restrict access based on the user's role.
+
+The login is done using an auth context.
+ 
+We have the following RBAC rules:
+
+* Logged In Users with `read` permissions can see the summary/count.
+* Logged In Users with `read` permissions can see the list of To Do Items.
+* Logged In Users with `update` permissions can click the records to mark them as complete.
+* Logged In Users with `create` permissions can create new items.
+* Logged In Users with `delete` permissions can delete items.

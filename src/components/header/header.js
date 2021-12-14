@@ -1,14 +1,56 @@
-import React from 'react';
-import './header.scss'
+import React, { useState, useContext } from 'react';
+import { toDoContext } from '../../context/todo';
+import Auth from '../auth/auth';
+import { Button, Navbar, Classes, Drawer } from "@blueprintjs/core";
+import SettingsForm from '../settingsForm/settingsForm';
+import { authContext } from '../../context/auth';
+import { When } from 'react-if';
 
-function header(props) {
-    const { incomplete } = props;
+export default function Header() {
+    const auth = useContext(authContext);
+    const toDoInfo = useContext(toDoContext);
+    const [isOpen, setIsOpen] = useState(false);
+
+    let handleCloseDrawer = () => {
+        setIsOpen(false);
+    }
+
     return (
-        <header>
-            <h1>ToDo List Manager</h1>
-            <h2>{incomplete} items pending</h2>
-        </header>
+        <>
+            <Navbar class="bp3-navbar bp3-dark" style={{ background: '#008075' }}>
+                <Navbar.Group>
+                    <Navbar.Heading ><strong>ToDo List Manager</strong></Navbar.Heading>
+                    <Navbar.Divider />
+                    <Auth capability='read'>
+                        <strong>{toDoInfo.incomplete} items pending</strong>
+                    </Auth>
+                </Navbar.Group>
+                <Navbar.Group className="bp3-navbar-group bp3-align-right">
+                    <When condition={!auth.isLoggedIn}>
+                        <Button className="bp3-minimal" icon="log-in" text="Login" />
+                    </When>
+                    <When condition={auth.isLoggedIn}>
+                        <Button className="bp3-minimal" icon="home" text="Home" />
+                        <Button className="bp3-minimal " icon="cog" text="Settings" onClick={() => setIsOpen(true)} />
+                        <Button className="bp3-minimal" icon="log-out" text="Logout" onClick={auth.logOutFunction} />
+                    </When>
+                </Navbar.Group>
+            </Navbar>
+
+            <Drawer style={{ left: '30' }}
+                isOpen={isOpen}
+                onClose={handleCloseDrawer}
+                size={'300px'}
+                usePortal={true}
+                hasBackdrop={true}
+                canOutsideClickClose={true}
+            >
+                <div className={Classes.DRAWER_BODY}>
+                    <div className={Classes.DIALOG_BODY}>
+                        <SettingsForm handleCloseDrawer={handleCloseDrawer} />
+                    </div>
+                </div>
+            </Drawer>
+        </>
     )
 }
-
-export default header;

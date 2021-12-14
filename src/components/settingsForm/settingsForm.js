@@ -25,7 +25,7 @@ export default function SettingsForm(props) {
     return (
 
         <form onSubmit={handleSubmit}>
-            <h2 data-testid='formHeader'>Page Settings</h2><hr/><br/>
+            <h4 data-testid='formHeader'>Page Settings</h4><hr/><br/>
 
             <Switch checked={tempFlag === true} label="Display Completed" onChange={toggleSwitch} /><br/>
             <label class="bp3-label">

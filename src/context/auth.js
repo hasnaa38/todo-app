@@ -7,15 +7,22 @@ import cookie from 'react-cookies';
 export const authContext = React.createContext();
 
 function Auth(props) {
-    const BackendURL = '';
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const BackendURL = 'https://jam3ey.herokuapp.com';
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // HERE
     const [user, setUser] = useState({ email: '', capabilities: [] });
 
-    const lofInFunction = async (username, password) => {
-        const response = await superagent.post(`${BackendURL}/signin`).set('authorization', `Basic ${base64.encode(`${username}:${password}`)}`);
-        validateMyToken(response.body.token)
-    }
+    user.capabilities = ['read', 'create', 'update', 'delete'];
+    // user.capabilities = ['read', 'create'];
 
+    const lofInFunction = async (username, password) => {
+        try{
+            const response = await superagent.post(`${BackendURL}/signin`).set('authorization', `Basic ${base64.encode(`${username}:${password}`)}`);
+            console.log(response);
+            validateMyToken(response.body.token)
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const validateMyToken = (token) => {
         if(token){
             let user = jwt.decode(token);
@@ -23,7 +30,7 @@ function Auth(props) {
             setUser(user);
             cookie.save('token', token);
         }else{
-            setIsLoggedIn(false);
+            setIsLoggedIn(false); // HERE
             setUser({});
         }
     }
@@ -34,11 +41,21 @@ function Auth(props) {
         cookie.remove('token');
     }
 
+    const can = (capability) => {
+        return user?.capabilities?.includes(capability);
+    }
+
+    useEffect(()=>{
+        const tokenCookie = cookie.load('token');
+        validateMyToken(tokenCookie);
+    }, [])
+
     const state = {
         isLoggedIn: isLoggedIn,
         user: user,
         lofInFunction: lofInFunction,
-        logOutFunction: logOutFunction
+        logOutFunction: logOutFunction,
+        can: can
     }
 
     return (

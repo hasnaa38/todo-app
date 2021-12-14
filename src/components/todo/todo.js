@@ -1,24 +1,37 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { settingsContext } from '../../context/settings.js';
 import './todo.scss';
-import Header from '../header/header';
 import Form from '../form/form';
 import List from '../list/list';
-import SettingsForm from '../settingsForm/settingsForm';
-import { Button, Classes, Drawer } from "@blueprintjs/core";
+import Auth from '../auth/auth';
+import { Container, Row, Col } from "react-bootstrap";
+import { toDoContext } from '../../context/todo';
+import { Button } from "@blueprintjs/core";
 
 const ToDo = () => {
 
     const settings = useContext(settingsContext);
-    const [list, setList] = useState([]);
+    const toDoInfo = useContext(toDoContext);
+    const localStorageList = JSON.parse(localStorage.getItem('list')) || [];
+    const localStorageCompletedList = JSON.parse(localStorage.getItem('completedList')) || [];
+    const [list, setList] = useState(localStorageList);
+    const [completedList, setCompletedList] = useState(localStorageCompletedList);
     const [incomplete, setIncomplete] = useState([]);
-    const [completedList, setCompletedList] = useState([]);
-    const [pages, setPages] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const [pageElements, setPageElements] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
+    const [completedPageElements, setCompletedPageElements] = useState([]);
+    const [currentPage1, setCurrentPage1] = useState(1);
+    const [currentPage2, setCurrentPage2] = useState(1);
+    const [pages1, setPages1] = useState([]);
+    const [pages2, setPages2] = useState([]);
+    
+    
     function addItem(item) {
         setList([item, ...list]);
+        setLocalStorage(list);
+    }
+
+    function setLocalStorage(list) {
+        localStorage.setItem('list', JSON.stringify(list));
     }
 
     function deleteItem(id) {
@@ -27,27 +40,24 @@ const ToDo = () => {
     }
 
     function toggleComplete(id) {
-        list.map(item => {
+        let fullList = [...list, ...completedList];
+        fullList.map(item => {
             if (item.id === id) {
-                item.complete = 'true';
+                item.complete = !item.complete;
             }
             return item;
         });
-        completedList.map(item => {
-            if (item.id === id) {
-                item.complete = 'false';
-                setList([item, ...list]);
-            }
-            return item;
-        });
-        const completedItems = list.filter(item => item.complete);
-        setCompletedList([...completedItems, ...completedList]);
-        const updatedList = list.filter(item => !item.complete);
-        setList(updatedList);
+        const completedItems = fullList.filter(item => item.complete);
+        setCompletedList([...completedItems]);
+        const updatedList = fullList.filter(item => !item.complete);
+        setList([...updatedList]);
+        localStorage.setItem('completedList', JSON.stringify([...completedItems]));
+        localStorage.setItem('list', JSON.stringify([...updatedList]));
     }
 
-    function chunk(array, chunkSize) {
+    function chunk(array, stringChunkSize) {
         const res = [];
+        let chunkSize = Number(stringChunkSize);
         for (let i = 0; i < array.length; i += chunkSize) {
             const chunk = array.slice(i, i + chunkSize);
             res.push(chunk);
@@ -55,62 +65,72 @@ const ToDo = () => {
         return res;
     }
 
-    function handleChangePage(pageNumber) {
-        setCurrentPage(pageNumber);
+    function handleChangePage1(pageNumber) {
+        setCurrentPage1(pageNumber);
     }
 
-    let handleCloseDrawer = () => {
-        setIsOpen(false);
+    function handleChangePage2(pageNumber) {
+        setCurrentPage2(pageNumber);
     }
 
+    function pagination(listArray, pagesSetter, arraySetter, currentpage){
+        let numberOfPages = Math.ceil(listArray.length / settings.pageLimit);
+        let pagesArray = Array.from({ length: numberOfPages }, (v, k) => k + 1);
+        pagesSetter(pagesArray);
+        let chunks = chunk(listArray, settings.pageLimit);
+        arraySetter(chunks[currentpage - 1]);
+    }
 
     useEffect(() => {
         let incompleteCount = list.length;
         setIncomplete(incompleteCount);
+        toDoInfo.setIncomplete(incompleteCount);
         document.title = `To Do List: ${incomplete}`;
-        let numberOfPages = Math.ceil(list.length / settings.pageLimit);
-        let pagesArray = Array.from({ length: numberOfPages }, (v, k) => k + 1);
-        setPages(pagesArray);
-        let chunks = chunk(list, settings.pageLimit);
-        setPageElements(chunks[currentPage - 1]);
-    }, [list, currentPage, completedList]);
+        pagination(list, setPages1, setPageElements, currentPage1);
+        pagination(completedList, setPages2, setCompletedPageElements, currentPage2);
+    }, [list, completedList, currentPage1, currentPage2]);
 
     return (
         <>
-            <Header incomplete={incomplete} />
-            <Form addItem={addItem} />
-            <dev>
-                <dev id='pageNumbers'>
-                    <p>Pages &nbsp;</p>{pages.map(pageNumber => (
-                        <p style={{ cursor: 'pointer' }} onClick={() => handleChangePage(pageNumber)}>{pageNumber}  &nbsp;</p>
-                    ))}</dev>
-                <Button id='pageSettingsButton' icon="cog" onClick={() => setIsOpen(true)}></Button>
-            </dev>
-            {pageElements?.map(item => (
-                <List key={item.id} item={item} toggleComplete={toggleComplete} />
-            ))}
-
-            {settings.displayCompleted && <div>
-                <h3>Completed list:</h3>
-                {completedList.map(item => (
-                    <List key={item.id} item={item} toggleComplete={toggleComplete} />
-                ))}
-            </div>}
-
-            <Drawer style={{ left: '30' }}
-                isOpen={isOpen}
-                onClose={handleCloseDrawer}
-                size={'300px'}
-                usePortal={true}
-                hasBackdrop={true}
-                canOutsideClickClose={true}
-            >
-                <div className={Classes.DRAWER_BODY}>
-                    <div className={Classes.DIALOG_BODY}>
-                        <SettingsForm handleCloseDrawer={handleCloseDrawer} />
-                    </div>
-                </div>
-            </Drawer>
+            {/* <Header incomplete={incomplete} /> */}
+            <Container id='homepage'>
+                <Row>
+                    <Col>
+                        <Auth capability='create'>
+                            <Form addItem={addItem} />
+                        </Auth>
+                    </Col>
+                    <Col>
+                        <Auth capability='read'>
+                            <h5>Uncompleted Tasks</h5>
+                            <div id='pageNumbers'>
+                                {pages1?.map(pageNumber => (
+                                    <div style={{ padding: '5px' }} >
+                                        <Button className="bp3-button" style={{ cursor: 'pointer' }} onClick={() => handleChangePage1(pageNumber)}> {pageNumber} </Button>
+                                    </div>
+                                ))}
+                            </div>
+                            {pageElements?.map(item => (
+                                <List key={item.id} item={item} toggleComplete={toggleComplete} />
+                            ))}
+                            <br/>
+                            {settings.displayCompleted && <div>
+                                <h5>Completed Tasks</h5>
+                                <div id='pageNumbers'>
+                                    {pages2?.map(pageNumber => (
+                                        <div style={{ padding: '5px' }} >
+                                            <Button className="bp3-button" style={{ cursor: 'pointer' }} onClick={() => handleChangePage2(pageNumber)}> {pageNumber} </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {completedPageElements?.map(item => (
+                                    <List key={item.id} item={item} toggleComplete={toggleComplete} />
+                                ))}
+                            </div>}
+                        </Auth>
+                    </Col>
+                </Row>
+            </Container>
         </>
     );
 };
