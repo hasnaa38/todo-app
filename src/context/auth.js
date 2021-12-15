@@ -7,27 +7,35 @@ import cookie from 'react-cookies';
 export const authContext = React.createContext();
 
 function Auth(props) {
-    const BackendURL = 'https://jam3ey.herokuapp.com';
+    // const BackendURL = process.env.BACKEND_SERVER;
     const [isLoggedIn, setIsLoggedIn] = useState(false); // HERE
-    const [user, setUser] = useState({ email: '', capabilities: [] });
-    
-    user.capabilities = ['read', 'create', 'update', 'delete'];
+    const [user, setUser] = useState({ });
 
-    const lofInFunction = async (username, password) => {
+    const signupFunction = async (user) => {
         try {
-            const response = await superagent.post(`${BackendURL}/signin`).set('authorization', `Basic ${base64.encode(`${username}:${password}`)}`);
-            console.log(response);
-            validateMyToken(response.body.token)
+            const response = await superagent.post(`http://localhost:4000/signup`, user);
+            console.log('signed up');
         } catch (error) {
             console.log(error);
         }
     }
-    const validateMyToken = (token) => {
+    
+    const lofInFunction = async (username, password) => {
+        try {
+            const response = await superagent.post(`http://localhost:4000/signin`).set('authorization', `Basic ${base64.encode(`${username}:${password}`)}`);
+            validateMyToken(response.body);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const validateMyToken = async (input) => {
+        let token = input?.token;
         if (token) {
-            let user = jwt.decode(token);
+            let validUser = await superagent.post(`http://localhost:4000/user`).set('authorization', `Bearer ${token}`);
             setIsLoggedIn(true);
-            setUser(user);
-            cookie.save('token', token);
+            setUser(validUser.body.user);
+            cookie.save('token', validUser.body.token);
         } else {
             setIsLoggedIn(false); // HERE
             setUser({});
@@ -38,6 +46,7 @@ function Auth(props) {
         setIsLoggedIn(false);
         setUser({});
         cookie.remove('token');
+        cookie.remove('user');
     }
 
     const markAsLoggedIn = () => {
@@ -45,12 +54,14 @@ function Auth(props) {
     }
 
     const can = (capability) => {
+        console.log(user);
+        user.capabilities = user?.capabilities === undefined ? ['read', 'write', 'edit', 'delete'] : user?.capabilities;
         return user?.capabilities?.includes(capability);
     }
 
     useEffect(() => {
         const tokenCookie = cookie.load('token');
-        validateMyToken(tokenCookie);
+        validateMyToken({token: tokenCookie });
     }, [])
 
     const state = {
@@ -60,7 +71,8 @@ function Auth(props) {
         logOutFunction: logOutFunction,
         can: can,
         setUser: setUser,
-        markAsLoggedIn: markAsLoggedIn
+        markAsLoggedIn: markAsLoggedIn,
+        signupFunction: signupFunction
     }
 
     return (

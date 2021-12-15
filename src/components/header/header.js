@@ -5,6 +5,7 @@ import { Button, Navbar, Classes, Drawer } from "@blueprintjs/core";
 import SettingsForm from '../settingsForm/settingsForm';
 import { authContext } from '../../context/auth';
 import { When } from 'react-if';
+import { Link } from 'react-router-dom'
 
 export default function Header() {
     const auth = useContext(authContext);
@@ -27,12 +28,19 @@ export default function Header() {
                 </Navbar.Group>
                 <Navbar.Group className="bp3-navbar-group bp3-align-right">
                     <When condition={!auth.isLoggedIn}>
-                        <Button className="bp3-minimal" icon="log-in" text="Login" />
+                        <Link to='/todo-app/signup'>
+                            <Button className="bp3-minimal" icon="log-in" text="Signup" />
+                        </Link>
+                        <Link to='/todo-app/'>
+                            <Button className="bp3-minimal" icon="log-in" text="Login" />
+                        </Link>
                     </When>
                     <When condition={auth.isLoggedIn}>
                         <Button className="bp3-minimal" icon="home" text="Home" />
                         <Button className="bp3-minimal " icon="cog" text="Settings" onClick={() => setIsOpen(true)} />
-                        <Button className="bp3-minimal" icon="log-out" text="Logout" onClick={auth.logOutFunction} />
+                        <Link to="/todo-app/">
+                            <Button className="bp3-minimal" icon="log-out" text="Logout" onClick={auth.logOutFunction} />
+                        </Link>
                     </When>
                 </Navbar.Group>
             </Navbar>

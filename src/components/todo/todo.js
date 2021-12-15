@@ -8,16 +8,15 @@ import List from '../list/list';
 import Auth from '../auth/auth';
 import { Container, Row, Col } from "react-bootstrap";
 import { Button } from "@blueprintjs/core";
+import superagent from 'superagent';
 
 const ToDo = () => {
-
     const settings = useContext(settingsContext);
     const toDoInfo = useContext(toDoContext);
     const auth = useContext(authContext);
-    const localStorageList = JSON.parse(localStorage.getItem('list')) || [];
-    const localStorageCompletedList = JSON.parse(localStorage.getItem('completedList')) || [];
-    const [list, setList] = useState(localStorageList);
-    const [completedList, setCompletedList] = useState(localStorageCompletedList);
+    const [dbList, setDbList] = useState([]);
+    const [list, setList] = useState([]);
+    const [completedList, setCompletedList] = useState([]);
     const [incomplete, setIncomplete] = useState([]);
     const [pageElements, setPageElements] = useState([]);
     const [completedPageElements, setCompletedPageElements] = useState([]);
@@ -26,14 +25,8 @@ const ToDo = () => {
     const [pages1, setPages1] = useState([]);
     const [pages2, setPages2] = useState([]);
 
-
     function addItem(item) {
-        setList([item, ...list]);
-        setLocalStorage(list);
-    }
-
-    function setLocalStorage(list) {
-        localStorage.setItem('list', JSON.stringify(list));
+        setList([...list, item]);
     }
 
     function deleteItem(id) {
@@ -41,20 +34,41 @@ const ToDo = () => {
         setList(items);
     }
 
-    function toggleComplete(id) {
-        let fullList = [...list, ...completedList];
-        fullList.map(item => {
+    async function toggleComplete(id) {
+        dbList.map(async (item) => {
             if (item.id === id) {
-                item.complete = !item.complete;
+                let response = await superagent.put(`http://localhost:4000/items/${item.id}`, {
+                    assignee: item.assignee,
+                    complete: !item.complete,
+                    difficulty: item.difficulty,
+                    frontend_id: item.frontend_id,
+                    text: item.text
+                });
+                item = response.body;
             }
             return item;
         });
-        const completedItems = fullList.filter(item => item.complete);
+        let updatedDdList = await superagent.get(`http://localhost:4000/items`);
+        setDbList([...updatedDdList.body]);
+        const completedItems = updatedDdList.body.filter(item => item.complete);
         setCompletedList([...completedItems]);
-        const updatedList = fullList.filter(item => !item.complete);
+        const updatedList = updatedDdList.body.filter(item => !item.complete);
         setList([...updatedList]);
-        localStorage.setItem('completedList', JSON.stringify([...completedItems]));
-        localStorage.setItem('list', JSON.stringify([...updatedList]));
+    }
+
+    async function toggleDelete(id){
+        dbList.map(async (item) => {
+            if (item.id === id) {
+                console.log('hi');
+                let response = await superagent.delete(`http://localhost:4000/items/${item.id}`);
+            }
+        });
+        let updatedDdList = await superagent.get(`http://localhost:4000/items`);
+        setDbList([...updatedDdList.body]);
+        const completedItems = updatedDdList.body.filter(item => item.complete);
+        setCompletedList([...completedItems]);
+        const updatedList = updatedDdList.body.filter(item => !item.complete);
+        setList([...updatedList]);
     }
 
     function chunk(array, stringChunkSize) {
@@ -83,7 +97,17 @@ const ToDo = () => {
         arraySetter(chunks[currentpage - 1]);
     }
 
-
+    useEffect(() => {
+        let getAll = async () => {
+            let response = await superagent.get(`http://localhost:4000/items`);
+            setDbList(response.body);
+            const completedItems = response.body.filter(item => item.complete);
+            const uncompletedItems = response.body.filter(item => !item.complete);
+            setCompletedList([...completedItems]);
+            setList([...uncompletedItems]);
+        }
+        getAll();
+    }, []);
 
     useEffect(() => {
         let incompleteCount = list.length;
@@ -92,14 +116,10 @@ const ToDo = () => {
         document.title = `To Do List: ${incomplete}`;
         pagination(list, setPages1, setPageElements, currentPage1);
         pagination(completedList, setPages2, setCompletedPageElements, currentPage2);
-    }, [list, completedList, currentPage1, currentPage2]);
-
-
+    }, [currentPage1, currentPage2, dbList, list, completedList, auth.user]);
 
     return (
         <>
-            {/* <Header incomplete={incomplete} /> */}
-
             <Container id='homepage'>
                 <Row>
                     <Col>
@@ -118,7 +138,7 @@ const ToDo = () => {
                                 ))}
                             </div>
                             {pageElements?.map(item => (
-                                <List key={item.id} item={item} toggleComplete={toggleComplete} />
+                                <List key={item.id} item={item} toggleComplete={toggleComplete} toggleDelete={toggleDelete}/>
                             ))}
                             <br />
                             {settings.displayCompleted && <div>
@@ -131,7 +151,7 @@ const ToDo = () => {
                                     ))}
                                 </div>
                                 {completedPageElements?.map(item => (
-                                    <List key={item.id} item={item} toggleComplete={toggleComplete} />
+                                    <List key={item.id} item={item} toggleComplete={toggleComplete} toggleDelete={toggleDelete}/>
                                 ))}
                             </div>}
                         </Auth>

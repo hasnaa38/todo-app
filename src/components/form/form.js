@@ -3,16 +3,20 @@ import useForm from '../../hooks/form';
 import { v4 as uuid } from 'uuid';
 import { Button } from "@blueprintjs/core";
 import './form.scss';
+import superagent from 'superagent';
 
 export default function Form(props) {
     const { addItem } = props;
     const { handleChange, handleSubmit } = useForm(submitNewItem);
+    // const BackendURL = process.env.BACKEND_SERVER;
 
-    function submitNewItem(item) {
-        item.id = uuid();
+    async function submitNewItem(item) {
+        item.frontend_id = uuid();
         item.complete = false;
         if (!item.difficulty) item.difficulty = 3;
-        addItem(item);
+        console.log(item);
+        let response = await superagent.post(`http://localhost:4000/items`, item);
+        addItem(response.body);
     }
 
     return (
