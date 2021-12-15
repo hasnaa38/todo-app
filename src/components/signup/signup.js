@@ -53,7 +53,6 @@ export default function SignUp() {
                     </label>
                     <div>
                         <button style={{ margin: '5px' }} class="bp3-button" type="submit">SignUp</button>
-                        <button style={{ margin: '5px' }} class="bp3-button">Login</button>
                     </div>
 
                 </form>

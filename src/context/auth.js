@@ -13,7 +13,7 @@ function Auth(props) {
 
     const signupFunction = async (user) => {
         try {
-            const response = await superagent.post(`http://localhost:4000/signup`, user);
+            const response = await superagent.post(`https://todo-backend-h3.herokuapp.com/signup`, user);
             console.log('signed up');
         } catch (error) {
             console.log(error);
@@ -22,7 +22,7 @@ function Auth(props) {
     
     const lofInFunction = async (username, password) => {
         try {
-            const response = await superagent.post(`http://localhost:4000/signin`).set('authorization', `Basic ${base64.encode(`${username}:${password}`)}`);
+            const response = await superagent.post(`https://todo-backend-h3.herokuapp.com/signin`).set('authorization', `Basic ${base64.encode(`${username}:${password}`)}`);
             validateMyToken(response.body);
         } catch (error) {
             console.log(error);
@@ -32,7 +32,7 @@ function Auth(props) {
     const validateMyToken = async (input) => {
         let token = input?.token;
         if (token) {
-            let validUser = await superagent.post(`http://localhost:4000/user`).set('authorization', `Bearer ${token}`);
+            let validUser = await superagent.post(`https://todo-backend-h3.herokuapp.com/user`).set('authorization', `Bearer ${token}`);
             setIsLoggedIn(true);
             setUser(validUser.body.user);
             cookie.save('token', validUser.body.token);

@@ -29,7 +29,7 @@ export default function Header() {
                 <Navbar.Group className="bp3-navbar-group bp3-align-right">
                     <When condition={!auth.isLoggedIn}>
                         <Link to='/todo-app/signup'>
-                            <Button className="bp3-minimal" icon="log-in" text="Signup" />
+                            <Button className="bp3-minimal" icon="new-person" text="Signup" />
                         </Link>
                         <Link to='/todo-app/'>
                             <Button className="bp3-minimal" icon="log-in" text="Login" />

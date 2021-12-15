@@ -37,7 +37,7 @@ const ToDo = () => {
     async function toggleComplete(id) {
         dbList.map(async (item) => {
             if (item.id === id) {
-                let response = await superagent.put(`http://localhost:4000/items/${item.id}`, {
+                let response = await superagent.put(`https://todo-backend-h3.herokuapp.com/items/${item.id}`, {
                     assignee: item.assignee,
                     complete: !item.complete,
                     difficulty: item.difficulty,
@@ -48,7 +48,7 @@ const ToDo = () => {
             }
             return item;
         });
-        let updatedDdList = await superagent.get(`http://localhost:4000/items`);
+        let updatedDdList = await superagent.get(`https://todo-backend-h3.herokuapp.com/items`);
         setDbList([...updatedDdList.body]);
         const completedItems = updatedDdList.body.filter(item => item.complete);
         setCompletedList([...completedItems]);
@@ -60,10 +60,10 @@ const ToDo = () => {
         dbList.map(async (item) => {
             if (item.id === id) {
                 console.log('hi');
-                let response = await superagent.delete(`http://localhost:4000/items/${item.id}`);
+                let response = await superagent.delete(`https://todo-backend-h3.herokuapp.com/items/${item.id}`);
             }
         });
-        let updatedDdList = await superagent.get(`http://localhost:4000/items`);
+        let updatedDdList = await superagent.get(`https://todo-backend-h3.herokuapp.com/items`);
         setDbList([...updatedDdList.body]);
         const completedItems = updatedDdList.body.filter(item => item.complete);
         setCompletedList([...completedItems]);
@@ -99,7 +99,7 @@ const ToDo = () => {
 
     useEffect(() => {
         let getAll = async () => {
-            let response = await superagent.get(`http://localhost:4000/items`);
+            let response = await superagent.get(`https://todo-backend-h3.herokuapp.com/items`);
             setDbList(response.body);
             const completedItems = response.body.filter(item => item.complete);
             const uncompletedItems = response.body.filter(item => !item.complete);

@@ -42,7 +42,7 @@ In this phase, we’ll be adding a form editor so that users can save their pref
 
 Also, the users choices will be saved in Local Storage. So each time they will re-visit the page, their choices will still be there.
 
-## Phase 3 [ Lab 33 ] - Context API - Behaviors
+## Phase 3 [ Lab 33 ] - Roles
 
 In this phase, we'll be extending the functionality of the application by requiring users to login to view items and also restrict access based on the user's role.
 
@@ -55,3 +55,7 @@ We have the following RBAC rules:
 * Logged In Users with `update` permissions can click the records to mark them as complete.
 * Logged In Users with `create` permissions can create new items.
 * Logged In Users with `delete` permissions can delete items.
+
+## Phase 4 [ Lab 34 ] - Connecting to the backend
+
+In this final phase, we’ll be requiring that users be logged in through a live authentication server, in order to see the to do items. Additionally, based on their user type, they will be allowed (or denied) to perform actions such as editing or deleting them. All To Do items will be stored in a database, accessed through a deployed API

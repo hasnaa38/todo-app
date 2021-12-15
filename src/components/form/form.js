@@ -15,7 +15,7 @@ export default function Form(props) {
         item.complete = false;
         if (!item.difficulty) item.difficulty = 3;
         console.log(item);
-        let response = await superagent.post(`http://localhost:4000/items`, item);
+        let response = await superagent.post(`https://todo-backend-h3.herokuapp.com/items`, item);
         addItem(response.body);
     }
 
